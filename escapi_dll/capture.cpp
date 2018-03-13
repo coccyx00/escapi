@@ -711,10 +711,5 @@ void CaptureClass::deinitCapture()
 
 	mReader->Release();
 
-	mSource->Shutdown();
-	mSource->Release();
-
-	delete[] mCaptureBuffer;
-
 	LeaveCriticalSection(&mCritsec);
 }

@@ -1,5 +1,10 @@
 /* Extremely Simple Capture API */
 
+/// Error Handling
+#define ERR_LIBRARY_SETUP	-1
+#define ERR_ENTRY_POINT		-2
+#define ERR_OLD_VERSION		-3
+
 struct SimpleCapParams
 {
 	/* Target buffer. 
@@ -37,7 +42,7 @@ enum CAPTURE_PROPETIES
 
 /* Sets up the ESCAPI DLL and the function pointers below. Call this first! */
 /* Returns number of capture devices found (same as countCaptureDevices, below) */
-extern int setupESCAPI();
+extern int setupESCAPI(bool enableMessage = false);
 
 /* return the number of capture devices found */
 typedef int (*countCaptureDevicesProc)();
@@ -60,7 +65,10 @@ typedef void (*doCaptureProc)(unsigned int deviceno);
 typedef int (*isCaptureDoneProc)(unsigned int deviceno);
 
 /* Get the user-friendly name of a capture device. */
-typedef void (*getCaptureDeviceNameProc)(unsigned int deviceno, char *namebuffer, int bufferlength);
+typedef void(*getCaptureDeviceNameProc)(unsigned int deviceno, char *namebuffer, int bufferlength);
+
+/* Get the unique identifier of a capture device */
+typedef void(*getCaptureDeviceNameUniqueProc)(unsigned int deviceno, char *namebuffer, int bufferlength);
 
 /* Returns the ESCAPI DLL version. 0x200 for 2.0 */
 typedef int (*ESCAPIVersionProc)();
@@ -110,6 +118,7 @@ extern deinitCaptureProc deinitCapture;
 extern doCaptureProc doCapture;
 extern isCaptureDoneProc isCaptureDone;
 extern getCaptureDeviceNameProc getCaptureDeviceName;
+extern getCaptureDeviceNameUniqueProc getCaptureDeviceNameUnique;
 extern ESCAPIVersionProc ESCAPIVersion;
 extern getCapturePropertyValueProc getCapturePropertyValue;
 extern getCapturePropertyAutoProc getCapturePropertyAuto;

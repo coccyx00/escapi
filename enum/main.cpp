@@ -18,6 +18,9 @@ void main()
 		char temp[256];
 		getCaptureDeviceName(i, temp, 256);
 		printf("Device %d: \"%s\"\n", i, temp);
+		getCaptureDeviceNameUnique(i, temp, 256);
+		printf("Device Unique %d: \"%s\"\n", i, temp);
+		
 	}
 
 }

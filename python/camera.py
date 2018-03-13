@@ -67,6 +67,17 @@ def device_name(device):
     lib.getCaptureDeviceName(device, namearry, 256)
     camearaname = namearry.value
     return camearaname
+    
+def device_name_unique(device):
+    """
+    Get the device name for the given device
+    :param device: The number of the device
+    :return: The name of the device
+    """
+    namearry = (c_char * 256)()
+    lib.getCaptureDeviceNameUnique(device, namearry, 256)
+    camearaname = namearry.value
+    return camearaname
 
 def init_camera(device, width, height):
     array = (width * height * c_int)()

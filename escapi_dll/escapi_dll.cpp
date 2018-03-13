@@ -13,6 +13,7 @@ extern HRESULT InitDevice(int device);
 extern void CleanupDevice(int device);
 extern int CountCaptureDevices();
 extern void GetCaptureDeviceName(int deviceno, char * namebuffer, int bufferlength);
+extern void GetCaptureDeviceNameUnique(int deviceno, char * namebuffer, int bufferlength);
 extern void CheckForFail(int device);
 extern int GetErrorCode(int device);
 extern int GetErrorLine(int device);
@@ -35,6 +36,15 @@ extern "C" void __declspec(dllexport) getCaptureDeviceName(unsigned int deviceno
 		return;
 
 	GetCaptureDeviceName(deviceno, namebuffer, bufferlength);
+}
+
+
+extern "C" void __declspec(dllexport) getCaptureDeviceNameUnique(unsigned int deviceno, char *namebuffer, int bufferlength)
+{
+	if (deviceno > MAXDEVICES)
+		return;
+
+	GetCaptureDeviceNameUnique(deviceno, namebuffer, bufferlength);
 }
 
 extern "C" int __declspec(dllexport) ESCAPIDLLVersion()

@@ -135,6 +135,65 @@ void GetCaptureDeviceName(int aDevice, char * aNamebuffer, int aBufferlength)
 	}
 }
 
+void GetCaptureDeviceNameUnique(int aDevice, char * aNamebuffer, int aBufferlength)
+{
+	int i;
+	if (!aNamebuffer || aBufferlength <= 0)
+		return;
+
+	aNamebuffer[0] = 0;
+
+	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+
+	if (FAILED(hr)) return;
+
+	hr = MFStartup(MF_VERSION);
+
+	if (FAILED(hr)) return;
+
+	// choose device
+	IMFAttributes *attributes = NULL;
+	hr = MFCreateAttributes(&attributes, 1);
+	ScopedRelease<IMFAttributes> attributes_s(attributes);
+
+	if (FAILED(hr)) return;
+
+	hr = attributes->SetGUID(
+		MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE,
+		MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID
+		);
+
+	if (FAILED(hr)) return;
+
+	ChooseDeviceParam param = { 0 };
+	hr = MFEnumDeviceSources(attributes, &param.mDevices, &param.mCount);
+
+	if (FAILED(hr)) return;
+
+	if (aDevice < (signed)param.mCount)
+	{
+		WCHAR *name = 0;
+		UINT32 namelen = 255;
+		hr = param.mDevices[aDevice]->GetAllocatedString(
+			MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK,
+			&name,
+			&namelen
+			);
+		if (SUCCEEDED(hr) && name)
+		{
+			i = 0;
+			while (i < aBufferlength - 1 && i < (signed)namelen && name[i] != 0)
+			{
+				aNamebuffer[i] = (char)name[i];
+				i++;
+			}
+			aNamebuffer[i] = 0;
+
+			CoTaskMemFree(name);
+		}
+	}
+}
+
 void CheckForFail(int aDevice)
 {
 	if (!gDevice[aDevice])
